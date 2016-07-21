@@ -45,7 +45,10 @@ uint32_t SPI_Open(SPI_T *spi,
         u32DataWidth = 0;
 
     spi->CTL = u32MasterSlave | (u32DataWidth << SPI_CTL_DWIDTH_Pos) | (u32SPIMode);
-
+	
+	if(u32MasterSlave == SPI_SLAVE)
+		spi->SSCTL = SPI_SSCTL_SSLTEN_Msk;
+	
     return ( SPI_SetBusClock(spi, u32BusClock) );
 }
 
