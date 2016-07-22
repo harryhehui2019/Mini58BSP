@@ -1,8 +1,8 @@
 /******************************************************************************
  * @file     main.c
  * @version  V3.00
- * $Date: 15/05/27 5:39p $ 
- * @brief    
+ * $Date: 15/05/27 5:39p $
+ * @brief
  *         Show how to wake up system form Power-down mode by brown-out detector interrupt.
  *
  * @note
@@ -37,7 +37,7 @@ void BOD_IRQHandler(void)
     /* Clear Interrupt Flag */
     SYS->BODCTL |= SYS_BODCTL_BODIF_Msk;
 
-    printf("Brown Out is Detected\n");    
+    printf("Brown Out is Detected\n");
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -46,14 +46,14 @@ void BOD_IRQHandler(void)
 void PDWU_IRQHandler(void)
 {
     /* Clear Power Down Wake Up interrupt flag */
-    CLK->PWRCTL |= CLK_PWRCTL_PDWKIF_Msk;    
+    CLK->PWRCTL |= CLK_PWRCTL_PDWKIF_Msk;
 
-    printf("Wake Up Interrupt is asserted\n");  
+    printf("Wake Up Interrupt is asserted\n");
 }
 
 void SYS_Init(void)
 {
-     /*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
     /* Unlock protected registers */
@@ -70,7 +70,7 @@ void SYS_Init(void)
 
     /* Set P5 multi-function pins for crystal output/input */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
-    SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);		
+    SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
 
     /* Enable HXT clock (external XTAL 12MHz) */
     CLK_EnableXtalRC(CLK_PWRCTL_XTLEN_HXT);
@@ -95,37 +95,37 @@ void SYS_Init(void)
 
     /* Set P0 multi-function pins for UART RXD and TXD */
     SYS->P1_MFP &= ~(SYS_MFP_P12_Msk | SYS_MFP_P13_Msk);
-    SYS->P1_MFP |= (SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD);		
+    SYS->P1_MFP |= (SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD);
 
     /* Set P3 multi-function pins for Clock Output */
     SYS->P3_MFP = SYS_MFP_P36_CLKO;
 }
- 
+
 void UART_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init UART                                                                                               */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init UART                                                                                               */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Reset IP */
     SYS_ResetModule(UART0_RST);
-    
+
     /* Configure UART and set UART Baudrate */
     UART_Open(UART0, 115200);
-  
+
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
 /*  Main Function                                                                                          */
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main (void)
-{   
-     /* Init System, peripheral clock and multi-function I/O */
+{
+    /* Init System, peripheral clock and multi-function I/O */
     SYS_Init();
 
     /* Init UART for printf */
     UART_Init();
 
-    printf("\n\nCPU @ %dHz\n", SystemCoreClock);  
+    printf("\n\nCPU @ %dHz\n", SystemCoreClock);
     printf("+----------------------------------------+\n");
     printf("|    Mini58 System Driver Sample Code    |\n");
     printf("+----------------------------------------+\n");

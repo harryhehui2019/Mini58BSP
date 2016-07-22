@@ -25,9 +25,9 @@ void TMR0_IRQHandler(void)
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -35,7 +35,7 @@ void SYS_Init(void)
     /* Set P5 multi-function pins for XTAL1 and XTAL2 */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
-	
+
     /* Enable external 12MHz XTAL (UART), and HIRC */
     CLK->PWRCTL = CLK_PWRCTL_XTL12M | CLK_PWRCTL_HIRCEN_Msk;
 
@@ -50,15 +50,15 @@ void SYS_Init(void)
 
     /* Select TIMER0 clock source from external crystal*/
     CLK->CLKSEL1 = (CLK->CLKSEL1 & ~CLK_CLKSEL1_TMR0SEL_Msk) | CLK_CLKSEL1_TMR0SEL_XTAL;
-    
+
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and CycylesPerUs automatically. */
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
@@ -80,7 +80,7 @@ int main(void)
 
     printf("\nThis sample code use timer to generate interrupt every 1 second \n");
 
-    // Set timer 0 working 1Hz in periodic mode 
+    // Set timer 0 working 1Hz in periodic mode
     TIMER_Open(TIMER0, TIMER_PERIODIC_MODE, 1);
 
     // Enable timer interrupt

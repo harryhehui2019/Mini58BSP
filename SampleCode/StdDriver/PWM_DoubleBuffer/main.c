@@ -31,9 +31,9 @@ void PWM_IRQHandler(void)
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -41,7 +41,7 @@ void SYS_Init(void)
     /* Set P5 multi-function pins for XTAL1 and XTAL2 */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
-	
+
     /* Enable external 12MHz XTAL (UART), HIRC */
     CLK->PWRCTL = CLK_PWRCTL_XTL12M | CLK_PWRCTL_HIRCEN_Msk;
 
@@ -65,9 +65,9 @@ void SYS_Init(void)
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
@@ -105,7 +105,7 @@ int32_t main (void)
     PWM_EnableOutput(PWM, 1);
 
     // Enable PWM channel 0 period interrupt
-    PWM_EnablePeriodInt(PWM, 0);		
+    PWM_EnablePeriodInt(PWM, 0);
     NVIC_EnableIRQ(PWM_IRQn);
 
     // Start

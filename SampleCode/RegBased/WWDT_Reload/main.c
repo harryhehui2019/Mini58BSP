@@ -18,7 +18,7 @@ void WDT_IRQHandler(void)
     WWDT->RLDCNT  = WWDT_RELOAD_WORD;
     //clear WWDT interrupt flag
     WWDT->STATUS = WWDT_STATUS_WWDTIF_Msk;
-    
+
     printf("WWDT counter reload\n");
 
 }
@@ -40,7 +40,7 @@ void SYS_Init(void)
     CLK->PWRCTL = CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_LIRCEN_Msk;
 
     /* Waiting for clock ready */
-    while((CLK->STATUS & (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_LIRCSTB_Msk)) != 
+    while((CLK->STATUS & (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_LIRCSTB_Msk)) !=
             (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_LIRCSTB_Msk));
 
     /* Enable UART and WDT clock */
@@ -63,7 +63,7 @@ void SYS_Init(void)
 
 void UART_Init(void)
 {
-    // Set UART to 8 bit character length, 1 stop bit, and no parity 
+    // Set UART to 8 bit character length, 1 stop bit, and no parity
     UART0->LINE = UART_LINE_WLS_Msk;
     // 22.1184 MHz reference clock input, for 115200 bps
     // 22118400 / 115200 = 192. Using mode 2 to calculate baudrate, 192 - 2 = 190 = 0xBE
@@ -90,7 +90,7 @@ int32_t main (void)
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
     }
-    
+
     // WWDT timeout every 768 * 64 WWDT clock, compare interrupt trigger at 768 * 32 WWDT clock, enable WWDT counter compare interrupt
     WWDT->CTL = WWDT_PRESCALER_768 |
                 (0x20 << WWDT_CTL_CMPDAT_Pos)|

@@ -17,9 +17,9 @@
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     while(SYS->REGLCTL != 1) {
@@ -33,12 +33,12 @@ void SYS_Init(void)
 
     /* Waiting for clock ready */
     while((CLK->STATUS & (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk)) !=
-          (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk));
+            (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk));
 
     /* Set core clock as PLL_CLOCK from PLL */
     CLK->PLLCTL = PLLCTL_SETTING;
     while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
-		CLK->CLKDIV = (CLK->CLKDIV & ~CLK_CLKDIV_HCLKDIV_Msk ) | CLK_CLKDIV_HCLK(2);
+    CLK->CLKDIV = (CLK->CLKDIV & ~CLK_CLKDIV_HCLKDIV_Msk ) | CLK_CLKDIV_HCLK(2);
     CLK->CLKSEL0 &= (~CLK_CLKSEL0_HCLKSEL_Msk);
     CLK->CLKSEL0 |= CLK_CLKSEL0_HCLKSEL_PLL;
 
@@ -58,9 +58,9 @@ void SYS_Init(void)
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
@@ -130,51 +130,50 @@ int32_t main (void)
     */
 
 
-     while(1)
-     {
-          // Enable PWM Precise Center Aligned Type
-          PWM->PCACTL = PWM_PCACTL_PCAEN_Msk;
+    while(1) {
+        // Enable PWM Precise Center Aligned Type
+        PWM->PCACTL = PWM_PCACTL_PCAEN_Msk;
 
-          // PWM Channel 0 Output : high width = 7.96u, low width = 8.08u
-          PWM->CMPDAT0 = 100;
-          PWM->PERIOD0= 401;
+        // PWM Channel 0 Output : high width = 7.96u, low width = 8.08u
+        PWM->CMPDAT0 = 100;
+        PWM->PERIOD0= 401;
 
-          // Polling, Wait 1 period interrupt flags
-          while((PWM->INTSTS & (PWM_INTSTS_ZIF0_Msk << 0)) == 0);
-          PWM->INTSTS = (PWM_INTSTS_ZIF0_Msk << 0);
+        // Polling, Wait 1 period interrupt flags
+        while((PWM->INTSTS & (PWM_INTSTS_ZIF0_Msk << 0)) == 0);
+        PWM->INTSTS = (PWM_INTSTS_ZIF0_Msk << 0);
 
-          // Disable PWM Precise Center Aligned Type
-          PWM->PCACTL &= ~(PWM_PCACTL_PCAEN_Msk);
+        // Disable PWM Precise Center Aligned Type
+        PWM->PCACTL &= ~(PWM_PCACTL_PCAEN_Msk);
 
-          // PWM Channel 0 Output : high width = 24.08u, low width = 8.08u
-          PWM->CMPDAT0 = 100;
-          PWM->PERIOD0 = 401;
+        // PWM Channel 0 Output : high width = 24.08u, low width = 8.08u
+        PWM->CMPDAT0 = 100;
+        PWM->PERIOD0 = 401;
 
-          // Polling, Wait 1 period interrupt flags
-          while((PWM->INTSTS & (PWM_INTSTS_ZIF0_Msk << 0)) == 0);
-          PWM->INTSTS = (PWM_INTSTS_ZIF0_Msk << 0);
+        // Polling, Wait 1 period interrupt flags
+        while((PWM->INTSTS & (PWM_INTSTS_ZIF0_Msk << 0)) == 0);
+        PWM->INTSTS = (PWM_INTSTS_ZIF0_Msk << 0);
 
-          // Enable PWM Precise Center Aligned Type
-          PWM->PCACTL = PWM_PCACTL_PCAEN_Msk;
+        // Enable PWM Precise Center Aligned Type
+        PWM->PCACTL = PWM_PCACTL_PCAEN_Msk;
 
-          // PWM Channel 0 Output : high width = 8.08u, low width = 8u
-          PWM->CMPDAT0 = 99;
-          PWM->PERIOD0 = 402;
+        // PWM Channel 0 Output : high width = 8.08u, low width = 8u
+        PWM->CMPDAT0 = 99;
+        PWM->PERIOD0 = 402;
 
-          // Polling, Wait 1 period interrupt flags
-          while((PWM->INTSTS & (PWM_INTSTS_ZIF0_Msk << 0)) == 0);
-          PWM->INTSTS = (PWM_INTSTS_ZIF0_Msk << 0);
+        // Polling, Wait 1 period interrupt flags
+        while((PWM->INTSTS & (PWM_INTSTS_ZIF0_Msk << 0)) == 0);
+        PWM->INTSTS = (PWM_INTSTS_ZIF0_Msk << 0);
 
-          // Disable PWM Precise Center Aligned Type
-          PWM->PCACTL &= ~(PWM_PCACTL_PCAEN_Msk);
+        // Disable PWM Precise Center Aligned Type
+        PWM->PCACTL &= ~(PWM_PCACTL_PCAEN_Msk);
 
-          // PWM Channel 0 Output : high width = 24.24u, low width = 8u
-          PWM->CMPDAT0 = 99;
-          PWM->PERIOD0 = 402;
+        // PWM Channel 0 Output : high width = 24.24u, low width = 8u
+        PWM->CMPDAT0 = 99;
+        PWM->PERIOD0 = 402;
 
-          // Polling, Wait 1 period interrupt flags
-          while((PWM->INTSTS & (PWM_INTSTS_ZIF0_Msk << 0)) == 0);
-          PWM->INTSTS = (PWM_INTSTS_ZIF0_Msk << 0);
+        // Polling, Wait 1 period interrupt flags
+        while((PWM->INTSTS & (PWM_INTSTS_ZIF0_Msk << 0)) == 0);
+        PWM->INTSTS = (PWM_INTSTS_ZIF0_Msk << 0);
     }
 
 }

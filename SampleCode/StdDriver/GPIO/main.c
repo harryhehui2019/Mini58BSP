@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     main.c
  * @version  V2.10
- * $Date: 15/06/02 7:45p $ 
- * @brief    Use GPIO driver to control the GPIO pin direction, control their 
+ * $Date: 15/06/02 7:45p $
+ * @brief    Use GPIO driver to control the GPIO pin direction, control their
  *           high/low state, and how to use GPIO interrupts.
  *
  * @note
@@ -23,16 +23,14 @@
  * @details     The Port0/Port1 default IRQ, declared in startup_Mini58.s.
  */
 void GPIO01_IRQHandler(void)
-{    
+{
     /* To check if P1.5 interrupt occurred */
-    if (P1->INTSRC & BIT5)
-    {
+    if (P1->INTSRC & BIT5) {
         P1->INTSRC = BIT5;
         P30 = P30 ^ 1;
         printf("P1.5 INT occurred. \n");
-        
-    }else
-    {
+
+    } else {
         /* Un-expected interrupt. Just clear all PORT0, PORT1 interrupts */
         P0->INTSRC = P0->INTSRC;
         P1->INTSRC = P1->INTSRC;
@@ -53,13 +51,11 @@ void GPIO01_IRQHandler(void)
 void GPIO234_IRQHandler(void)
 {
     /* To check if P2.2 interrupt occurred */
-    if (P2->INTSRC & BIT2)
-    {
+    if (P2->INTSRC & BIT2) {
         P2->INTSRC = BIT2;
         P30 = P30 ^ 1;
         printf("P2.2 INT occurred. \n");
-    }else
-    {
+    } else {
         /* Un-expected interrupt. Just clear all PORT2, PORT3 and PORT4 interrupts */
         P2->INTSRC = P2->INTSRC;
         P3->INTSRC = P3->INTSRC;
@@ -97,7 +93,7 @@ void EINT0_IRQHandler(void)
  * @details     The External INT1(P5.2) default IRQ, declared in startup_Mini58.s.
  */
 void EINT1_IRQHandler(void)
-{    
+{
     /* For P5.2, clear the INT flag */
     P5->INTSRC = BIT2;
     P30 = P30 ^ 1;
@@ -108,14 +104,14 @@ void SYS_Init(void)
 {
     /* Unlock protected registers */
     SYS_UnlockReg();
-    
+
     /* Set P5 multi-function pins for XTAL1 and XTAL2 */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
-	
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Enable external 12MHz XTAL, HIRC */
     CLK->PWRCTL |= CLK_PWRCTL_XTL12M | CLK_PWRCTL_HIRCEN_Msk;
@@ -125,43 +121,43 @@ void SYS_Init(void)
 
     /* Switch HCLK clock source to XTL */
     CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_XTAL,CLK_CLKDIV_HCLK(1));
-    
-    /* STCLK to XTL STCLK to XTL */
-    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_XTAL);    
 
-    /* Enable IP clock */       
-    CLK_EnableModuleClock(UART0_MODULE);                        
-                
+    /* STCLK to XTL STCLK to XTL */
+    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLKSEL_XTAL);
+
+    /* Enable IP clock */
+    CLK_EnableModuleClock(UART0_MODULE);
+
     /* Select IP clock source */
     CLK_SetModuleClock(UART0_MODULE,CLK_CLKSEL1_UARTSEL_XTAL,CLK_CLKDIV_UART(1));
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
-    SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD; 
-           
+    SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
+
     /* Set P3 multi-function pins for Clock Output */
     SYS->P3_MFP = SYS_MFP_P36_CLKO;
 
     /* To update the variable SystemCoreClock */
     SystemCoreClockUpdate();
-            
+
     /* Lock protected registers */
-    SYS_LockReg();    
+    SYS_LockReg();
 }
- 
+
 void UART_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init UART                                                                                               */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init UART                                                                                               */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Reset IP */
     SYS_ResetModule(SYS_IPRST1_UART0RST_Msk);
-    
+
     /* Configure UART and set UART Baudrate */
     UART_Open(UART0, 115200);
-    
+
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -172,20 +168,20 @@ int main (void)
     int32_t i32Err;
 
     /* Init System, IP clock and multi-function I/O */
-    SYS_Init(); //In the end of SYS_Init() will issue SYS_LockReg() to lock protected register. If user want to write protected register, please issue SYS_UnlockReg() to unlock protected register.    
+    SYS_Init(); //In the end of SYS_Init() will issue SYS_LockReg() to lock protected register. If user want to write protected register, please issue SYS_UnlockReg() to unlock protected register.
 
     /* Init UART for printf */
     UART_Init();
 
     printf("\n\nCPU @ %dHz\n", SystemCoreClock);
-                                
+
     printf("+-------------------------------------+ \n");
     printf("|    Mini58 GPIO Driver Sample Code  | \n");
     printf("+-------------------------------------+ \n");
 
     /*-----------------------------------------------------------------------------------------------------*/
     /* GPIO Basic Mode Test --- Use Pin Data Input/Output to control GPIO pin                              */
-    /*-----------------------------------------------------------------------------------------------------*/    
+    /*-----------------------------------------------------------------------------------------------------*/
     printf("  >> Please connect P1.0 and P3.4 first << \n");
     printf("     Press any key to start test by using [Pin Data Input/Output Control] \n\n");
     getchar();
@@ -193,31 +189,27 @@ int main (void)
     /* Configure P1.0 as Output mode and P3.4 as Input mode then close it */
     GPIO_SetMode(P1, BIT0, GPIO_MODE_OUTPUT);
     GPIO_SetMode(P3, BIT4, GPIO_MODE_INPUT);
-    
+
     i32Err = 0;
     printf("  GPIO Output/Input test ...... \n");
 
     /* Use Pin Data Input/Output Control to pull specified I/O or get I/O pin status */
     P10 = 0;
-    if (P34 != 0)
-    {
+    if (P34 != 0) {
         i32Err = 1;
     }
 
     P10 = 1;
-    if (P34 != 1)
-    {
+    if (P34 != 1) {
         i32Err = 1;
     }
 
-    if ( i32Err )
-    { 
+    if ( i32Err ) {
         printf("  [FAIL] --- Please make sure P1.0 and P3.4 are connected. \n");
-    }else
-    {
+    } else {
         printf("  [OK] \n");
     }
-    
+
     /* Configure P1.0 and P3.4 to default Quasi-bidirectional mode */
     GPIO_SetMode(P1, BIT0, GPIO_MODE_QUASI);
     GPIO_SetMode(P3, BIT4, GPIO_MODE_QUASI);
@@ -225,8 +217,8 @@ int main (void)
 
     /*-----------------------------------------------------------------------------------------------------*/
     /* GPIO Interrupt Function Test                                                                        */
-    /*-----------------------------------------------------------------------------------------------------*/   
-    printf("\n  P15, P22, P32(INT0) and P52(INT1) are used to test interrupt\n  and control LEDs(P30)\n");    
+    /*-----------------------------------------------------------------------------------------------------*/
+    printf("\n  P15, P22, P32(INT0) and P52(INT1) are used to test interrupt\n  and control LEDs(P30)\n");
 
     /*Configure P30 for LED control */
     GPIO_SetMode(P3, BIT0, GPIO_MODE_OUTPUT);
@@ -237,7 +229,7 @@ int main (void)
     NVIC_EnableIRQ(GPIO01_IRQn);
 
 
-     /*  Configure P2.2 as Quasi-bidirection mode and enable interrupt by falling edge trigger */
+    /*  Configure P2.2 as Quasi-bidirection mode and enable interrupt by falling edge trigger */
     GPIO_SetMode(P2, BIT2, GPIO_MODE_QUASI);
     GPIO_EnableInt(P2, 2, GPIO_INT_FALLING);
     NVIC_EnableIRQ(GPIO234_IRQn);
@@ -252,15 +244,15 @@ int main (void)
     GPIO_EnableEINT1(P5, 2, GPIO_INT_BOTH_EDGE);
     NVIC_EnableIRQ(EINT1_IRQn);
 
-   /* Enable interrupt de-bounce function and select de-bounce sampling cycle time */
+    /* Enable interrupt de-bounce function and select de-bounce sampling cycle time */
     GPIO_SET_DEBOUNCE_TIME(GPIO_DBCTL_DBCLKSRC_HCLK, GPIO_DBCTL_DBCLKSEL_1);
     GPIO_ENABLE_DEBOUNCE(P1, BIT5);
     GPIO_ENABLE_DEBOUNCE(P2, BIT2);
     GPIO_ENABLE_DEBOUNCE(P3, BIT2);
     GPIO_ENABLE_DEBOUNCE(P5, BIT2);
 
-   /* Waiting for interrupts */
-   while (1);            
+    /* Waiting for interrupts */
+    while (1);
 
 }
 

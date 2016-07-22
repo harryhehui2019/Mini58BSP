@@ -48,9 +48,9 @@ int main(void)
 void SYS_Init(void)
 {
     int32_t i32TimeOutCnt;
- /*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     while(SYS->REGLCTL != 1) {
@@ -59,17 +59,16 @@ void SYS_Init(void)
         SYS->REGLCTL = 0x88;
     }
 
-		/* Read User Config to select internal high speed RC */
+    /* Read User Config to select internal high speed RC */
     SystemInit();
-		
+
     /* Enable external 12MHz XTAL, HIRC */
     CLK->PWRCTL |= CLK_PWRCTL_XTL12M | CLK_PWRCTL_HIRCEN_Msk;
 
     /* Waiting for clock ready */
     i32TimeOutCnt = __HSI / 200; /* About 5ms */
     while((CLK->STATUS & (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk)) !=
-				(CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk))
-    {
+            (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk)) {
         if(i32TimeOutCnt-- <= 0)
             break;
     }
@@ -83,9 +82,9 @@ void SYS_Init(void)
     /* Select IP clock source */
     CLK->CLKSEL1 = CLK_CLKSEL1_UARTSEL_XTAL;
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD and TXD */
     SYS->P1_MFP &= ~(SYS_MFP_P12_Msk | SYS_MFP_P13_Msk);
     SYS->P1_MFP |= (SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD);
@@ -102,9 +101,9 @@ void SYS_Init(void)
 
 void UART_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init UART                                                                                               */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init UART                                                                                               */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Reset IP */
     SYS->IPRST1 |=  SYS_IPRST1_UART0RST_Msk;
     SYS->IPRST1 &= ~SYS_IPRST1_UART0RST_Msk;
@@ -116,9 +115,9 @@ void UART_Init(void)
 
 void SPI_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init SPI                                                                                                */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init SPI                                                                                                */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Configure as a master, clock idle low, falling clock edge Tx, rising edge Rx and 32-bit transaction */
     /* Set IP clock divider. SPI clock rate = 2MHz */
     CLK->APBCLK |= CLK_APBCLK_SPICKEN_Msk;
@@ -139,24 +138,20 @@ void SpiLoopbackTest(void)
     SPI->TX =  0;
 
     u32Err = 0;
-    for(u32TestCount=0; u32TestCount<100; u32TestCount++)
-    {
+    for(u32TestCount=0; u32TestCount<100; u32TestCount++) {
         /* set the source data and clear the destination buffer */
-        for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++)
-        {
+        for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++) {
             g_au32SourceData[u32DataCount] = u32DataCount;
             g_au32DestinationData[u32DataCount] = 0;
         }
 
         u32DataCount=0;
 
-        if((u32TestCount&0x1FF) == 0)
-        {
+        if((u32TestCount&0x1FF) == 0) {
             putchar('.');
         }
 
-        while(1)
-        {
+        while(1) {
             /* Set data to TX buffer */
             SPI->TX = g_au32SourceData[u32DataCount];
 
@@ -173,8 +168,7 @@ void SpiLoopbackTest(void)
         }
 
         /*  Check the received data */
-        for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++)
-        {
+        for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++) {
             if(g_au32DestinationData[u32DataCount]!=g_au32SourceData[u32DataCount])
                 u32Err = 1;
         }
@@ -188,8 +182,8 @@ void SpiLoopbackTest(void)
     else
         printf(" [PASS]\n\n");
 
-		while(1);
-		
+    while(1);
+
 //    return ;
 }
 

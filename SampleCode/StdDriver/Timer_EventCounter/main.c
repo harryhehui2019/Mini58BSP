@@ -15,15 +15,15 @@
 void TMR0_IRQHandler(void)
 {
     printf("Count 1000 falling events! Test complete\n");
-    TIMER_ClearIntFlag(TIMER0); 
-    
+    TIMER_ClearIntFlag(TIMER0);
+
 }
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -31,7 +31,7 @@ void SYS_Init(void)
     /* Set P5 multi-function pins for XTAL1 and XTAL2 */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
-	
+
     /* Enable external 12MHz XTAL (UART), and HIRC */
     CLK->PWRCTL = CLK_PWRCTL_XTL12M | CLK_PWRCTL_HIRCEN_Msk;
 
@@ -49,15 +49,15 @@ void SYS_Init(void)
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
     /* Set P3 multi function pin for Timer 0 counter pin */
     SYS->P3_MFP = SYS_MFP_P34_TM0_CNT_OUT;
-    
+
     /* Lock protected registers */
     SYS_LockReg();
 }
@@ -81,10 +81,10 @@ int main(void)
 
     P0->DOUT |= 1;                     // Set init state to high
     P0->MODE = (P0->MODE & ~0x3) | 0x1;  // Set to output mode
-    
-    // Give a dummy target frequency here. Will over write prescale and compare value with macro 
+
+    // Give a dummy target frequency here. Will over write prescale and compare value with macro
     TIMER_Open(TIMER0, TIMER_ONESHOT_MODE, 100);
-    
+
     // Update prescale and compare value to what we need in event counter mode.
     TIMER_SET_PRESCALE_VALUE(TIMER0, 0);
     TIMER_SET_CMP_VALUE(TIMER0, 1000);
@@ -95,13 +95,13 @@ int main(void)
     // Enable timer interrupt
     TIMER_EnableInt(TIMER0);
     NVIC_EnableIRQ(TMR0_IRQn);
-    
-    
+
+
     for(i = 0; i < 1000; i++) {
         P0->DOUT &= ~1; // low
         P0->DOUT |= 1;  // high
     }
-        
+
     while(1);
 
 }

@@ -2,21 +2,21 @@
  * @file     main.c
  * @version  V1.00
  * $Revision: 3 $
- * $Date: 15/06/02 8:48p $ 
+ * $Date: 15/06/02 8:48p $
  * @brief    Demonstrate the dead-zone feature with PWM.
  *
  * @note
  * Copyright (C) 2015 Nuvoton Technology Corp. All rights reserved.
-*****************************************************************************/  
+*****************************************************************************/
 #include <stdio.h>
 #include "Mini58Series.h"
 
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     while(SYS->REGLCTL != 1) {
@@ -24,7 +24,7 @@ void SYS_Init(void)
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
     }
-		
+
     /* Enable HIRC */
     CLK->PWRCTL = CLK_PWRCTL_HIRCEN_Msk;
 
@@ -32,20 +32,20 @@ void SYS_Init(void)
     while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
 
     /* Switch HCLK clock source to HIRC */
-    CLK->CLKSEL0 = (CLK->CLKSEL0 & ~CLK_CLKSEL0_HCLKSEL_Msk) | CLK_CLKSEL0_HCLKSEL_HIRC; 
-    CLK->CLKDIV = (CLK->CLKDIV & ~CLK_CLKDIV_HCLKDIV_Msk) | 0; 
-		
+    CLK->CLKSEL0 = (CLK->CLKSEL0 & ~CLK_CLKSEL0_HCLKSEL_Msk) | CLK_CLKSEL0_HCLKSEL_HIRC;
+    CLK->CLKDIV = (CLK->CLKDIV & ~CLK_CLKDIV_HCLKDIV_Msk) | 0;
+
     /* Enable IP clock */
     CLK->APBCLK = CLK_APBCLK_UART0CKEN_Msk | CLK_APBCLK_PWMCH01CKEN_Msk;
-	
+
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and CycylesPerUs automatically. */
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
@@ -59,21 +59,21 @@ void SYS_Init(void)
 
 void UART_Init(void)
 {
-    // Set UART to 8 bit character length, 1 stop bit, and no parity 
-    UART0->LINE = UART_LINE_WLS_Msk;	
+    // Set UART to 8 bit character length, 1 stop bit, and no parity
+    UART0->LINE = UART_LINE_WLS_Msk;
     // 22.1184 MHz reference clock input, for 115200 bps
     // 22118400 / 115200 = 192. Using mode 2 to calculate baudrate, 192 - 2 = 190 = 0xBE
-    UART0->BAUD = UART_BAUD_BAUDM1_Msk | UART_BAUD_BAUDM0_Msk | (0xBE);	  
+    UART0->BAUD = UART_BAUD_BAUDM1_Msk | UART_BAUD_BAUDM0_Msk | (0xBE);
 }
 
 int32_t main (void)
 {
-    /* Init System, IP clock and multi-function I/O 
-       In the end of SYS_Init() will issue SYS_LockReg() 
-       to lock protected register. If user want to write 
-       protected register, please issue SYS_UnlockReg() 
+    /* Init System, IP clock and multi-function I/O
+       In the end of SYS_Init() will issue SYS_LockReg()
+       to lock protected register. If user want to write
+       protected register, please issue SYS_UnlockReg()
        to unlock protected register if necessary */
-    SYS_Init(); 
+    SYS_Init();
 
     /* Init UART to 115200-8n1 for print message */
     UART_Init();
@@ -89,26 +89,26 @@ int32_t main (void)
     // Enable PWM channel 0 auto-reload mode, enable Dead Zone.
     // No need to configure channel 1 because it's the inverse of channel 0 output here
     PWM->CTL = PWM_CTL_CNTMODE0_Msk | PWM_CTL_DTCNT01_Msk;
-    /* 
-      Configure PWM channel 0 init period and duty. 
+    /*
+      Configure PWM channel 0 init period and duty.
       Period is HCLK / (prescaler * clock divider * (CNR + 1))
       Duty ratio = (CMR + 1) / (CNR + 1)
       Period = 22.1184 MHz / (2 * 1 * (9215 + 1)) =  1200 Hz
       Duty ratio = (4607 + 1) / (9215 + 1) = 50%
     */
     PWM->CMPDAT0 = 4607;
-    PWM->PERIOD0 = 9215;   
+    PWM->PERIOD0 = 9215;
 
     // Configure dead zone duration to 10us.
-    // 22118400(clk) / 2(perscaler) * 10 * 10^-6 ~= 111  
+    // 22118400(clk) / 2(perscaler) * 10 * 10^-6 ~= 111
     PWM->DTCTL = 111;
-    
+
     // Enable PWM channel 0 and 1 output
     PWM->POEN = PWM_POEN_POEN0_Msk | PWM_POEN_POEN1_Msk;
-    
+
     // Start
     PWM->CTL |= PWM_CTL_CNTEN0_Msk;
-    
+
     while(1);
 
 }

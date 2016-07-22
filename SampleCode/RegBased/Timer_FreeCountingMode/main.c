@@ -4,7 +4,7 @@
  * @version  V1.00
  * $Revision: 2 $
  * $Date: 15/02/13 5:10p $
- * @brief    Use the timer pin P3.2 to demonstrate timer free counting mode 
+ * @brief    Use the timer pin P3.2 to demonstrate timer free counting mode
  *           function. Also display the measured input frequency to UART console.
  *
  * @note
@@ -22,7 +22,7 @@ void TMR0_IRQHandler(void)
     if(cnt == 0) {
         t0 = TIMER0->CAP;
         cnt++;
-    } else if(cnt == 1){
+    } else if(cnt == 1) {
         t1 = TIMER0->CAP;
         cnt++;
         if(t0 > t1) {
@@ -42,9 +42,9 @@ void TMR0_IRQHandler(void)
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     while(SYS->REGLCTL != 1) {
@@ -52,12 +52,12 @@ void SYS_Init(void)
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
     }
-		
+
     /* Enable HIRC */
     CLK->PWRCTL = CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_XTL12M;
 
     /* Waiting for clock ready */
-    while((CLK->STATUS & (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk)) != 
+    while((CLK->STATUS & (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk)) !=
             (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk));
     /* Enable UART and Timer 0 clock */
     CLK->APBCLK = CLK_APBCLK_UART0CKEN_Msk | CLK_APBCLK_TMR0CKEN_Msk;
@@ -67,9 +67,9 @@ void SYS_Init(void)
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
@@ -82,7 +82,7 @@ void SYS_Init(void)
 
 void UART_Init(void)
 {
-    // Set UART to 8 bit character length, 1 stop bit, and no parity 
+    // Set UART to 8 bit character length, 1 stop bit, and no parity
     UART0->LINE = UART_LINE_WLS_Msk;
     // 22.1184 MHz reference clock input, for 115200 bps
     // 22118400 / 115200 = 192. Using mode 2 to calculate baudrate, 192 - 2 = 190 = 0xBE
@@ -108,7 +108,7 @@ int main(void)
     getchar();
 
     /*
-      Timer 0 clock source is 22.118400MHz       
+      Timer 0 clock source is 22.118400MHz
     */
     TIMER0->CTL = TIMER_CTL_CNTEN_Msk | TIMER_PERIODIC_MODE;
 
@@ -116,8 +116,8 @@ int main(void)
     TIMER0->CMP = 0xFFFFFF;
 
     // Configure Timer 0 free counting mode, capture TDR value on falling edge, enable capture interrupt
-    TIMER0->EXTCTL = TIMER_CAPTURE_FREE_COUNTING_MODE | 
-                     TIMER_CAPTURE_FALLING_EDGE | 
+    TIMER0->EXTCTL = TIMER_CAPTURE_FREE_COUNTING_MODE |
+                     TIMER_CAPTURE_FALLING_EDGE |
                      TIMER_EXTCTL_CAPEN_Msk |
                      TIMER_EXTCTL_CAPIEN_Msk;
 

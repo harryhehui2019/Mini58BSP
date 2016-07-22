@@ -22,9 +22,9 @@ void TMR0_IRQHandler(void)
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     while(SYS->REGLCTL != 1) {
@@ -37,7 +37,7 @@ void SYS_Init(void)
     CLK->PWRCTL = CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_XTL12M;
 
     /* Waiting for clock ready */
-    while((CLK->STATUS & (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk)) != 
+    while((CLK->STATUS & (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk)) !=
             (CLK_STATUS_HIRCSTB_Msk | CLK_STATUS_XTLSTB_Msk));
     /* Enable UART and Timer 0 clock */
     CLK->APBCLK = CLK_APBCLK_UART0CKEN_Msk | CLK_APBCLK_TMR0CKEN_Msk;
@@ -49,9 +49,9 @@ void SYS_Init(void)
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
@@ -64,7 +64,7 @@ void SYS_Init(void)
 
 void UART_Init(void)
 {
-    // Set UART to 8 bit character length, 1 stop bit, and no parity 
+    // Set UART to 8 bit character length, 1 stop bit, and no parity
     UART0->LINE = UART_LINE_WLS_Msk;
     // 22.1184 MHz reference clock input, for 115200 bps
     // 22118400 / 115200 = 192. Using mode 2 to calculate baudrate, 192 - 2 = 190 = 0xBE
@@ -86,11 +86,12 @@ int main(void)
     UART_Init();
 
     printf("\nThis sample code use timer 0 to count P1.0 input event\n");
-    printf("Please connect P1.0 to P3.4, press any key to continue\n");    getchar();
+    printf("Please connect P1.0 to P3.4, press any key to continue\n");
+    getchar();
 
     P1->DOUT |= 1;                     // Set init state to high
     P1->MODE = (P0->MODE & ~0x3) | 0x1;  // Set to output mode
-    
+
     // Enable interrupt, event counter mode. Timer operate in one shot mode
     TIMER0->CTL = TIMER_CTL_CNTEN_Msk | TIMER_ONESHOT_MODE | TIMER_CTL_INTEN_Msk | TIMER_CTL_EXTCNTEN_Msk;
 
@@ -103,13 +104,13 @@ int main(void)
 
     // Enable timer interrupt
     NVIC_EnableIRQ(TMR0_IRQn);
-    
-    
+
+
     for(i = 0; i < 1000; i++) {
         P1->DOUT &= ~1; // low
         P1->DOUT |= 1;  // high
     }
-        
+
     while(1);
 
 }

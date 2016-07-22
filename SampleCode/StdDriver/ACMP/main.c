@@ -4,7 +4,7 @@
  * $Revision: 3 $
  * $Date: 15/05/28 10:37a $
  * @brief    Demonstrate Analog comparator (ACMP) comparison by
- *           comparing CPP0 (P1.5) with VBG voltage and show the result 
+ *           comparing CPP0 (P1.5) with VBG voltage and show the result
  *           on UART console.
  *
  * @note
@@ -36,7 +36,7 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Register write-protection disabled */
     SYS_UnlockReg();
-	
+
     /* Set P5 multi-function pins for XTAL1 and XTAL2 */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
@@ -46,13 +46,13 @@ void SYS_Init(void)
 
     /* Waiting for clock ready */
     CLK_WaitClockReady(CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk);
-	
+
     /* Switch HCLK clock source to XTL */
     CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_XTAL,CLK_CLKDIV_HCLK(1));
 
     /* Enable UART and ACMP clock */
     CLK->APBCLK = CLK_APBCLK_UART0CKEN_Msk | CLK_APBCLK_ACMPCKEN_Msk;
-	
+
     /* Select UART clock source from external crystal*/
     CLK->CLKSEL1 = (CLK->CLKSEL1 & ~CLK_CLKSEL1_UARTSEL_Msk) | CLK_CLKSEL1_UARTSEL_XTAL;
 
@@ -69,8 +69,8 @@ void SYS_Init(void)
 
     /* Disable digital input path of analog pin ACMP0_P to prevent leakage */
     GPIO_DISABLE_DIGITAL_PATH(P1, (1 << 5));
-    
-		/* Set P3.6 multi-function pin for ACMP0 output pin */
+
+    /* Set P3.6 multi-function pin for ACMP0 output pin */
     SYS->P3_MFP = SYS_MFP_P36_ACMP0_O;
 
     /* Register write-protection enabled */
@@ -89,7 +89,7 @@ int32_t main(void)
 
     /* Configure UART0: 115200, 8-bit word, no parity bit, 1 stop bit. */
     UART_Open(UART0, 115200);
-    
+
     printf("\n\n");
     printf("+---------------------------------------+\n");
     printf("|         Mini58 ACMP Sample Code      |\n");

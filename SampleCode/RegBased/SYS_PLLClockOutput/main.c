@@ -26,19 +26,17 @@ void Delay(uint32_t x)
 {
     int32_t i;
 
-    for(i = 0; i < x; i++)
-    {
+    for(i = 0; i < x; i++) {
         __NOP();
         __NOP();
     }
 }
 
-uint32_t g_au32PllSetting[] =
-{    
+uint32_t g_au32PllSetting[] = {
     CLK_PLLCTL_72MHz_HXT,   /* PLL = 72MHz */
     CLK_PLLCTL_96MHz_HXT,   /* PLL = 96MHz */
-    CLK_PLLCTL_100MHz_HXT,  /* PLL = 100MHz */	
-	
+    CLK_PLLCTL_100MHz_HXT,  /* PLL = 100MHz */
+
     CLK_PLLCTL_72MHz_HIRC,  /* PLL = 71.884800MHz */
     CLK_PLLCTL_96MHz_HIRC,  /* PLL = 96.129968MHz */
     CLK_PLLCTL_100MHz_HIRC, /* PLL = 99.532800MHz */
@@ -46,14 +44,14 @@ uint32_t g_au32PllSetting[] =
 
 void SYS_SET_PLL(uint32_t ctl)
 {
-  /* Set PLL to power down mode and PLL_STB bit in CLKSTATUS register will be cleared by hardware. */
-  CLK->PLLCTL |= CLK_PLLCTL_PD_Msk;
+    /* Set PLL to power down mode and PLL_STB bit in CLKSTATUS register will be cleared by hardware. */
+    CLK->PLLCTL |= CLK_PLLCTL_PD_Msk;
 
-  /* Set PLL frequency */
-  CLK->PLLCTL = ctl;
+    /* Set PLL frequency */
+    CLK->PLLCTL = ctl;
 
-  /* Wait for PLL clock ready */
-  while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));	
+    /* Wait for PLL clock ready */
+    while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
 }
 void SYS_PLL_Demo(void)
 {
@@ -65,8 +63,7 @@ void SYS_PLL_Demo(void)
 
     printf("\n-------------------------[ Test PLL ]-----------------------------\n");
 
-    for(i = 0; i < sizeof(g_au32PllSetting) / sizeof(g_au32PllSetting[0]) ; i++)
-    {
+    for(i = 0; i < sizeof(g_au32PllSetting) / sizeof(g_au32PllSetting[0]) ; i++) {
         /* Select HCLK clock source to HXT and HCLK source divider as 1 */
         CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HXT;
         CLK->CLKDIV  = (CLK->CLKDIV  & (~CLK_CLKDIV_HCLKDIV_Msk))  | CLK_CLKDIV_HCLK(1);
@@ -110,7 +107,7 @@ void SYS_Init(void)
 
     /* Wait for HIRC clock ready */
     while(!(CLK->STATUS & CLK_STATUS_HIRCSTB_Msk));
-	
+
     /* Set P5 multi-function pins for crystal output/input */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
@@ -133,7 +130,7 @@ void SYS_Init(void)
     /* Set core clock as PLL_CLOCK from PLL */
     CLK->PLLCTL = PLLCTL_SETTING;
     while(!(CLK->STATUS & CLK_STATUS_PLLSTB_Msk));
-		CLK->CLKDIV = (CLK->CLKDIV & ~CLK_CLKDIV_HCLKDIV_Msk ) | CLK_CLKDIV_HCLK(2);
+    CLK->CLKDIV = (CLK->CLKDIV & ~CLK_CLKDIV_HCLKDIV_Msk ) | CLK_CLKDIV_HCLK(2);
     CLK->CLKSEL0 &= (~CLK_CLKSEL0_HCLKSEL_Msk);
     CLK->CLKSEL0 |= CLK_CLKSEL0_HCLKSEL_PLL;
 
@@ -160,7 +157,7 @@ void SYS_Init(void)
     SYS->P1_MFP |= (SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD);
 
     /* Set P3 multi-function pins for Clock Output */
-		SYS->P3_MFP &= ~SYS_MFP_P36_Msk;
+    SYS->P3_MFP &= ~SYS_MFP_P36_Msk;
     SYS->P3_MFP = SYS_MFP_P36_CLKO;
 
 }
@@ -217,8 +214,7 @@ int32_t main(void)
     }
 
     /* Check if the write-protected registers are unlocked before BOD setting and CPU Reset */
-    if(SYS->REGLCTL != 0)
-    {
+    if(SYS->REGLCTL != 0) {
         printf("Protected Address is Unlocked\n");
     }
 

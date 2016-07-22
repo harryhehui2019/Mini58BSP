@@ -25,7 +25,7 @@ void SYS_Init(void)
     /* Unlock protected registers */
     SYS_UnlockReg();
 
-	/* Unlock protected registers */
+    /* Unlock protected registers */
     SYS_UnlockReg();
 
     /*---------------------------------------------------------------------------------------------------------*/
@@ -54,7 +54,7 @@ void SYS_Init(void)
     /* Select IP clock source */
     CLK_SetModuleClock(UART0_MODULE,CLK_CLKSEL1_UARTSEL_XTAL,CLK_CLKDIV_UART(1));
     CLK_SetModuleClock(SPI0_MODULE,CLK_CLKSEL1_SPISEL_XTAL,0);
-    
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -100,18 +100,18 @@ void SPI_Init(void)
 void SPI_IRQHandler(void)
 {
     uint32_t temp;
-	
-	while((SPI_GET_RX_FIFO_EMPTY_FLAG(SPI0))==0) {
+
+    while((SPI_GET_RX_FIFO_EMPTY_FLAG(SPI0))==0) {
         temp = SPI_READ_RX(SPI0);
         g_au32DestinationData[g_u32RxDataCount++] = temp;
     }
-	
-	while( (SPI_GET_TX_FIFO_FULL_FLAG(SPI0)==0) && (g_u32TxDataCount<TEST_COUNT) ) {
+
+    while( (SPI_GET_TX_FIFO_FULL_FLAG(SPI0)==0) && (g_u32TxDataCount<TEST_COUNT) ) {
         SPI_WRITE_TX(SPI0, g_au32SourceData[g_u32TxDataCount++]);
     }
-	
+
     if(g_u32TxDataCount>=TEST_COUNT)
-		SPI_DisableInt(SPI0, SPI_FIFO_TX_INTEN_MASK); /* Disable TX FIFO threshold interrupt */ 
+        SPI_DisableInt(SPI0, SPI_FIFO_TX_INTEN_MASK); /* Disable TX FIFO threshold interrupt */
 }
 
 int main(void)
@@ -126,7 +126,7 @@ int main(void)
 
     /* Init SPI */
     SPI_Init();
-    
+
     printf("\n\n");
     printf("+----------------------------------------------------------------------+\n");
     printf("|                       SPI Driver Sample Code                         |\n");
@@ -135,7 +135,7 @@ int main(void)
 
     printf("Configure SPI as a master.\n");
     printf("SPI clock rate: %d Hz\n", SPI_GetBusClock(SPI0));
-    
+
     for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++) {
         g_au32SourceData[u32DataCount] = 0x00550000 + u32DataCount;
         g_au32DestinationData[u32DataCount] = 0;
@@ -144,19 +144,19 @@ int main(void)
     printf("Before starting the data transfer, make sure the slave device is ready. Press any key to start the transfer.\n");
     getchar();
     printf("\n");
-	
+
     SPI_EnableInt(SPI0, SPI_FIFO_TX_INTEN_MASK | SPI_FIFO_RX_INTEN_MASK);
     NVIC_EnableIRQ(SPI_IRQn);
     SPI_EnableFIFO(SPI0, 2, 1);
-	
-	/* Wait for transfer done */
-	while(g_u32RxDataCount<TEST_COUNT);
-	
+
+    /* Wait for transfer done */
+    while(g_u32RxDataCount<TEST_COUNT);
+
     printf("Received data:\n");
     for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++) {
         printf("%d:\t0x%08X\n", u32DataCount, g_au32DestinationData[u32DataCount]);
     }
-        
+
     printf("The data transfer was done.\n");
 
     while(1);

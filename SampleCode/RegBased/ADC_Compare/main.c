@@ -30,9 +30,9 @@ void ADC_IRQHandler(void)
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     while(SYS->REGLCTL != 1) {
@@ -40,7 +40,7 @@ void SYS_Init(void)
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
     }
-		
+
     /* Enable HIRC */
     CLK->PWRCTL = CLK_PWRCTL_HIRCEN_Msk;
 
@@ -58,9 +58,9 @@ void SYS_Init(void)
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD and ADC channel 5 */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD | SYS_MFP_P15_ADC_CH5;
 
@@ -101,19 +101,19 @@ int32_t main (void)
 
     // Configure and enable Comparator 0 to monitor channel 5 input less than 0x200
     ADC->CMP0 = ADC_CMP0_ADCMPEN_Msk |
-                  ADC_CMP0_ADCMPIE_Msk |
-                  ADC_CMP0_LESS_THAN |
-                  (5 << ADC_CMP0_CMPCH_Pos) |
-                  (0xF << ADC_CMP0_CMPMCNT_Pos) |
-                  (0x200 << ADC_CMP0_CMPDAT_Pos);
-																		
+                ADC_CMP0_ADCMPIE_Msk |
+                ADC_CMP0_LESS_THAN |
+                (5 << ADC_CMP0_CMPCH_Pos) |
+                (0xF << ADC_CMP0_CMPMCNT_Pos) |
+                (0x200 << ADC_CMP0_CMPDAT_Pos);
+
     // Configure and enable Comparator 1 to monitor channel 5 input greater or equal to 0x200
     ADC->CMP1 = ADC_CMP1_ADCMPEN_Msk |
-                  ADC_CMP1_ADCMPIE_Msk |
-                  ADC_CMP1_GREATER_OR_EQUAL_TO |
-                  (5 << ADC_CMP1_CMPCH_Pos) |
-                  (0xF << ADC_CMP1_CMPMCNT_Pos) |
-                  (0x200 << ADC_CMP1_CMPDAT_Pos);
+                ADC_CMP1_ADCMPIE_Msk |
+                ADC_CMP1_GREATER_OR_EQUAL_TO |
+                (5 << ADC_CMP1_CMPCH_Pos) |
+                (0xF << ADC_CMP1_CMPMCNT_Pos) |
+                (0x200 << ADC_CMP1_CMPDAT_Pos);
 
     // Enable ADC interrupt
     NVIC_EnableIRQ(ADC_IRQn);

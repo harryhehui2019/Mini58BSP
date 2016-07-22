@@ -43,8 +43,8 @@ int main(void)
     printf(" P0.5 MOSI <--> P0.6 MISO \n");
 
     SpiLoopbackTest();
-		
-		while(1);
+
+    while(1);
 //    return 0;
 }
 
@@ -53,9 +53,9 @@ void SYS_Init(void)
     /* Unlock protected registers */
     SYS_UnlockReg();
 
-	/* Read User Config to select internal high speed RC */
-	SystemInit();	
-	
+    /* Read User Config to select internal high speed RC */
+    SystemInit();
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -79,7 +79,7 @@ void SYS_Init(void)
     /* Select IP clock source */
     CLK_SetModuleClock(UART0_MODULE,CLK_CLKSEL1_UARTSEL_XTAL,CLK_CLKDIV_UART(1));
     CLK_SetModuleClock(SPI0_MODULE,CLK_CLKSEL1_SPISEL_XTAL,0);
-    
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/

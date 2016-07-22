@@ -2,7 +2,7 @@
  * @file     main.c
  * @version  V2.00
  * $Revision: 3 $
- * $Date: 15/05/28 10:37a $ 
+ * $Date: 15/05/28 10:37a $
  * @brief    Transmit and receive data in UART RS485 mode.
  *
  * @note
@@ -18,7 +18,7 @@
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global variables                                                                                        */
 /*---------------------------------------------------------------------------------------------------------*/
-uint8_t g_u8SendData[12] ={0};
+uint8_t g_u8SendData[12] = {0};
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* Define functions prototype                                                                              */
@@ -30,23 +30,23 @@ extern void RS485_FunctionTest(void);
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Unlock protected registers */
     SYS_UnlockReg();
 
     /* Read User Config to select internal high speed RC */
-	SystemInit();	
+    SystemInit();
 
     /* Set P5 multi-function pins for crystal output/input */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
-	
+
     /* Enable External XTAL (4~24 MHz) */
     CLK->PWRCTL &= ~CLK_PWRCTL_XTLEN_Msk;
     CLK->PWRCTL |= (0x1 << CLK_PWRCTL_XTLEN_Pos); // XTAL12M (HXT) Enabled
-    
+
     /* Waiting for 12MHz clock ready */
     CLK_WaitClockReady( CLK_STATUS_XTLSTB_Msk);
 
@@ -54,20 +54,20 @@ void SYS_Init(void)
     CLK->CLKSEL0 &= ~CLK_CLKSEL0_HCLKSEL_Msk;
     CLK->CLKSEL0 |= CLK_CLKSEL0_HCLKSEL_XTAL;
 
-    /* Enable IP clock */        
+    /* Enable IP clock */
     CLK->APBCLK |= CLK_APBCLK_UART0CKEN_Msk; // UART Clock Enable
-    
+
     /* Select IP clock source */
     CLK->CLKSEL1 &= ~CLK_CLKSEL1_UARTSEL_Msk;
     CLK->CLKSEL1 |= (0x0 << CLK_CLKSEL1_UARTSEL_Pos);// Clock source from external 12 MHz or 32 KHz crystal clock
-                      
+
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
-    SystemCoreClockUpdate(); 
+    SystemCoreClockUpdate();
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART1 RXD and TXD  */
     SYS->P1_MFP &= ~(SYS_MFP_P12_Msk | SYS_MFP_P13_Msk);
     SYS->P1_MFP |= (SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD);
@@ -83,9 +83,9 @@ void SYS_Init(void)
 
 void UART_Init()
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init UART                                                                                               */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init UART                                                                                               */
+    /*---------------------------------------------------------------------------------------------------------*/
     UART_Open(UART0, 115200);
 }
 
@@ -106,19 +106,19 @@ int main(void)
     /* Init UART for printf */
     UART_Init();
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* SAMPLE CODE                                                                                             */
-/*---------------------------------------------------------------------------------------------------------*/
-    
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* SAMPLE CODE                                                                                             */
+    /*---------------------------------------------------------------------------------------------------------*/
+
     printf("\n\nCPU @ %dHz\n", SystemCoreClock);
 
     printf("+------------------------+\n");
     printf("| RS485 function test     |\n");
     printf("+------------------------+\n");
-        
+
     RS485_FunctionTest();
-	
-		while(1);
+
+    while(1);
 
 }
 

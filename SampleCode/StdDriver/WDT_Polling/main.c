@@ -2,12 +2,12 @@
  * @file     main.c
  * @version  V1.00
  * $Revision: 3 $
- * $Date: 15/05/28 10:37a $ 
+ * $Date: 15/05/28 10:37a $
  * @brief    Use polling mode to check WDT time-out state and reset WDT after time out occurs.
  *
  * @note
  * Copyright (C) 2015 Nuvoton Technology Corp. All rights reserved.
-*****************************************************************************/  
+*****************************************************************************/
 #include <stdio.h>
 #include "Mini58Series.h"
 
@@ -17,22 +17,22 @@ void WDT_IRQHandler(void)
 
     // Clear WDT interrupt flag
     WDT_CLEAR_TIMEOUT_INT_FLAG();
-  
+
     // Check WDT wake up flag
     if(WDT_GET_TIMEOUT_WAKEUP_FLAG()) {
         printf("Wake up by WDT\n");
         // Clear WDT wake up flag
         WDT_CLEAR_TIMEOUT_WAKEUP_FLAG();
-    }    
+    }
 
 }
 
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -40,7 +40,7 @@ void SYS_Init(void)
     /* Set P5 multi-function pins for XTAL1 and XTAL2 */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
-	
+
     /* Enable external 12MHz XTAL (UART), HIRC, and  RC 10K (fro WDT) */
     CLK->PWRCTL = CLK_PWRCTL_XTL12M | CLK_PWRCTL_HIRCEN_Msk | CLK_PWRCTL_LIRCEN_Msk;
 
@@ -58,9 +58,9 @@ void SYS_Init(void)
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
@@ -71,21 +71,21 @@ void SYS_Init(void)
 
 int32_t main (void)
 {
-    /* Init System, IP clock and multi-function I/O 
-       In the end of SYS_Init() will issue SYS_LockReg() 
-       to lock protected register. If user want to write 
-       protected register, please issue SYS_UnlockReg() 
+    /* Init System, IP clock and multi-function I/O
+       In the end of SYS_Init() will issue SYS_LockReg()
+       to lock protected register. If user want to write
+       protected register, please issue SYS_UnlockReg()
        to unlock protected register if necessary */
-    SYS_Init(); 
+    SYS_Init();
 
     /* Init UART to 115200-8n1 for print message */
     UART_Open(UART0, 115200);
-    
+
     printf("\nThis sample code demonstrate using WDT in polling mode\n");
-   
+
     // WDT register is locked, so it is necessary to unlock protect register before configure WDT
-    SYS_UnlockReg();    
-    
+    SYS_UnlockReg();
+
     // WDT timeout every 2^14 WDT clock, disable system reset, disable wake up system
     WDT_Open(WDT_TIMEOUT_2POW14, 0, FALSE, FALSE);
     // Enable WDT interrupt so interrupt flag raise on timeout.

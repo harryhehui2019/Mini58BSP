@@ -2,7 +2,7 @@
  * @file     main.c
  * @version  V2.00
  * $Revision: 4 $
- * $Date: 15/06/03 4:46p $ 
+ * $Date: 15/06/03 4:46p $
  * @brief    Show how to transmit and receive UART data in UART IrDA mode.
  *
  * @note
@@ -18,10 +18,10 @@
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global variables                                                                                        */
 /*---------------------------------------------------------------------------------------------------------*/
-uint8_t g_u8SendData[12] ={0};
-uint8_t g_u8RecData[RXBUFSIZE]  ={0};
+uint8_t g_u8SendData[12] = {0};
+uint8_t g_u8RecData[RXBUFSIZE]  = {0};
 
-volatile uint32_t g_u32comRbytes = 0;        
+volatile uint32_t g_u32comRbytes = 0;
 volatile uint32_t g_u32comRhead  = 0;
 volatile uint32_t g_u32comRtail  = 0;
 volatile int32_t g_bWait         = TRUE;
@@ -36,9 +36,9 @@ extern void IrDA_FunctionTest(void);
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Unlock protected registers */
     SYS->REGLCTL = 0x59;
     SYS->REGLCTL = 0x16;
@@ -54,7 +54,7 @@ void SYS_Init(void)
     /* Enable External XTAL (4~24 MHz) */
     CLK->PWRCTL &= ~CLK_PWRCTL_XTLEN_Msk;
     CLK->PWRCTL |= (0x1 << CLK_PWRCTL_XTLEN_Pos); // XTAL12M (HXT) Enabled
-    
+
     /* Waiting for 12MHz clock ready */
     while(!(CLK->STATUS & CLK_STATUS_XTLSTB_Msk));
 
@@ -62,20 +62,20 @@ void SYS_Init(void)
     /* Switch HCLK clock source to XTAL */
     CLK->CLKSEL0 &= ~CLK_CLKSEL0_HCLKSEL_Msk;
 
-    /* Enable IP clock */        
+    /* Enable IP clock */
     CLK->APBCLK |= CLK_APBCLK_UART0CKEN_Msk; // UART Clock Enable
-    
+
     /* Select IP clock source */
     CLK->CLKSEL1 &= ~CLK_CLKSEL1_UARTSEL_Msk;
     CLK->CLKSEL1 |= (0x0 << CLK_CLKSEL1_UARTSEL_Pos);// Clock source from external 12 MHz or 32 KHz crystal clock
-                      
+
     /* Update System Core Clock */
     /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
-    SystemCoreClockUpdate(); 
+    SystemCoreClockUpdate();
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART1 RXD and TXD  */
     SYS->P1_MFP &= ~(0x00000404 | 0x00000808);
     SYS->P1_MFP |= (0x00000400 | 0x00000800);
@@ -91,12 +91,12 @@ void SYS_Init(void)
 
 void UART_Init()
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init UART                                                                                               */
-/*---------------------------------------------------------------------------------------------------------*/
-    UART0->BAUD = UART_BAUD_BAUDM1_Msk | UART_BAUD_BAUDM0_Msk | 
-                                (((__XTAL + (115200/2)) / 115200)-2); 
-   
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init UART                                                                                               */
+    /*---------------------------------------------------------------------------------------------------------*/
+    UART0->BAUD = UART_BAUD_BAUDM1_Msk | UART_BAUD_BAUDM0_Msk |
+                  (((__XTAL + (115200/2)) / 115200)-2);
+
     UART0->LINE = 0x3 | (0x0 << UART_LINE_PBE_Pos) | (0x0 << UART_LINE_NSB_Pos) ;
 }
 
@@ -117,19 +117,19 @@ int main(void)
     /* Init UART for printf */
     UART_Init();
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* SAMPLE CODE                                                                                             */
-/*---------------------------------------------------------------------------------------------------------*/
-    
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* SAMPLE CODE                                                                                             */
+    /*---------------------------------------------------------------------------------------------------------*/
+
     printf("\n\nCPU @ %dHz\n", SystemCoreClock);
 
-        printf("+-------------------+\n");
+    printf("+-------------------+\n");
     printf("| IrDA function test |\n");
-        printf("+-------------------+\n");
-    
-        IrDA_FunctionTest();
-    
-        while(1);
+    printf("+-------------------+\n");
+
+    IrDA_FunctionTest();
+
+    while(1);
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -137,7 +137,7 @@ int main(void)
 /*---------------------------------------------------------------------------------------------------------*/
 void UART0_IRQHandler(void)
 {
-    
+
 }
 
 

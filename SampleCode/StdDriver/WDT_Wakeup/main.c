@@ -3,12 +3,12 @@
  * @file     main.c
  * @version  V1.00
  * $Revision: 3 $
- * $Date: 15/05/28 10:37a $ 
+ * $Date: 15/05/28 10:37a $
  * @brief    Use WDT to wake up system from Power-down mode periodically.
  *
  * @note
  * Copyright (C) 2015 Nuvoton Technology Corp. All rights reserved.
-*****************************************************************************/  
+*****************************************************************************/
 #include <stdio.h>
 #include "Mini58Series.h"
 
@@ -18,22 +18,22 @@ void WDT_IRQHandler(void)
 
     // Clear WDT interrupt flag
     WDT_CLEAR_TIMEOUT_INT_FLAG();
-  
+
     // Check WDT wake up flag
     if(WDT_GET_TIMEOUT_WAKEUP_FLAG()) {
         printf("Wake up by WDT\n");
         // Clear WDT wake up flag
         WDT_CLEAR_TIMEOUT_WAKEUP_FLAG();
-    }    
+    }
 
 }
 
 
 void SYS_Init(void)
 {
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init System Clock                                                                                       */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init System Clock                                                                                       */
+    /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -59,9 +59,9 @@ void SYS_Init(void)
     SystemCoreClockUpdate();
 
 
-/*---------------------------------------------------------------------------------------------------------*/
-/* Init I/O Multi-function                                                                                 */
-/*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
+    /* Init I/O Multi-function                                                                                 */
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Set P1 multi-function pins for UART RXD, TXD */
     SYS->P1_MFP = SYS_MFP_P12_UART0_RXD | SYS_MFP_P13_UART0_TXD;
 
@@ -72,31 +72,31 @@ void SYS_Init(void)
 
 int32_t main (void)
 {
-    /* Init System, IP clock and multi-function I/O 
-       In the end of SYS_Init() will issue SYS_LockReg() 
-       to lock protected register. If user want to write 
-       protected register, please issue SYS_UnlockReg() 
+    /* Init System, IP clock and multi-function I/O
+       In the end of SYS_Init() will issue SYS_LockReg()
+       to lock protected register. If user want to write
+       protected register, please issue SYS_UnlockReg()
        to unlock protected register if necessary */
-    SYS_Init(); 
+    SYS_Init();
 
     /* Init UART to 115200-8n1 for print message */
     UART_Open(UART0, 115200);
-    
+
     printf("\nThis sample code demonstrate using WDT to wake system up from power down mode\n");
-   
+
     // WDT register is locked, so it is necessary to unlock protect register before configure WDT
-    SYS_UnlockReg();    
+    SYS_UnlockReg();
     // WDT timeout every 2^14 WDT clock, disable system reset, enable wake up system
     WDT_Open(WDT_TIMEOUT_2POW14, 0, FALSE, TRUE);
 
     // Enable WDT timeout interrupt
     WDT_EnableInt();
     NVIC_EnableIRQ(WDT_IRQn);
-    
+
     while(1) {
         // Wait 'til UART FIFO empty to get a cleaner console out
         while(!UART_IS_TX_EMPTY(UART0));
-        CLK_PowerDown();        
+        CLK_PowerDown();
     }
 
 }

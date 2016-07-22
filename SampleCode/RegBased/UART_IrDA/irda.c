@@ -1,7 +1,7 @@
 /****************************************************************************
  * @file     IrDA.c
  * @version  V2.00
- * $Date: 15/06/03 4:45p $ 
+ * $Date: 15/06/03 4:45p $
  * @brief    Show how to transmit and receive UART data in UART IrDA mode.
  *
  * @note
@@ -36,12 +36,12 @@ void IrDA_FunctionTest()
     printf("|     Pin Configure                                           |\n");
     printf("+-------------------------------------------------------------+\n");
     printf("|  ______                                      _______        |\n");
-    printf("| |      |                                    |       |       |\n");  
-    printf("| |Master|---TXD0(pin46) <====> RXD0(pin45)---|Slave  |       |\n");  
-    printf("| |      |                                    |       |       |\n");  
-    printf("| |______|                                    |_______|       |\n");  
+    printf("| |      |                                    |       |       |\n");
+    printf("| |Master|---TXD0(pin46) <====> RXD0(pin45)---|Slave  |       |\n");
+    printf("| |      |                                    |       |       |\n");
+    printf("| |______|                                    |_______|       |\n");
     printf("|                                                             |\n");
-    printf("+-------------------------------------------------------------+\n");  
+    printf("+-------------------------------------------------------------+\n");
 
     printf("\n\n");
     printf("+-------------------------------------------------------------+\n");
@@ -62,14 +62,14 @@ void IrDA_FunctionTest()
     printf("|  [0] Master    [1] Slave                                    |\n");
     printf("+-------------------------------------------------------------+\n\n");
     u8item = GetChar();
-    
+
     if(u8item=='0')
         IrDA_FunctionTxTest();
     else
         IrDA_FunctionRxTest();
-    
+
     printf("\nIrDA Sample Code End.\n");
-        
+
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -92,23 +92,22 @@ void IrDA_FunctionTxTest()
 
     /* In IrDA Mode, Baud Rate configuration must be used MODE0*/
     UART0->BAUD = UART_BAUD_MODE0 | UART_BAUD_MODE0_DIVIDER(12000000, 57600);
-    
+
     /* IrDA Function Enable */
     UART0->FUNSEL = (0x2 << UART_FUNSEL_FUN_SEL_Pos);
 
     /* Set IrDA Tx mode */
-    UART0->IRDA &= ~UART_IRDA_TXINV_Msk;  
+    UART0->IRDA &= ~UART_IRDA_TXINV_Msk;
     UART0->IRDA |=  UART_IRDA_RXINV_Msk;
     UART0->IRDA |=  UART_IRDA_TXEN_Msk;
-    
+
     /* Wait Terminal input to send data to UART TX pin */
-    do
-    {
+    do {
         u8OutChar = GetChar();
         printf("   Input: %c , Send %c out\n",u8OutChar,u8OutChar);
-                UART0->DAT = u8OutChar;
-    }while(u8OutChar !='0');
-    
+        UART0->DAT = u8OutChar;
+    } while(u8OutChar !='0');
+
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -134,20 +133,18 @@ void IrDA_FunctionRxTest()
     UART0->FUNSEL = (0x2 << UART_FUNSEL_FUN_SEL_Pos);
 
     /* Set IrDA Rx mode */
-    UART0->IRDA &= ~UART_IRDA_TXINV_Msk;  
+    UART0->IRDA &= ~UART_IRDA_TXINV_Msk;
     UART0->IRDA |=  UART_IRDA_RXINV_Msk;
     UART0->IRDA &= ~UART_IRDA_TXEN_Msk;
 
     printf("Waiting...\n");
 
     /* Use polling method to wait master data */
-    do
-    {
-                if(UART0->INTSTS & UART_INTSTS_RDAIF_Msk)
-        {
-                        u8InChar = UART0->DAT;
+    do {
+        if(UART0->INTSTS & UART_INTSTS_RDAIF_Msk) {
+            u8InChar = UART0->DAT;
             printf("   Input: %c \n",u8InChar);
         }
-    }while(u8InChar !='0');
+    } while(u8InChar !='0');
 
 }

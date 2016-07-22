@@ -157,7 +157,7 @@ int32_t main(void)
 
     /* Run PLL Test */
     SYS_PLL_Demo();
-    
+
     printf("Exit\n");
 
     while(1);
