@@ -82,7 +82,7 @@ void UART_Init()
 
 
 #ifdef __ARMCC_VERSION
-__asm __set_SP(uint32_t _sp)
+void __asm __set_SP(uint32_t _sp)
 {
     MSR MSP, r0
     BX lr
