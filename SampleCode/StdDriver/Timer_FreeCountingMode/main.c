@@ -64,7 +64,7 @@ void SYS_Init(void)
     /* Enable UART and Timer 0 clock */
     CLK->APBCLK = CLK_APBCLK_UART0CKEN_Msk | CLK_APBCLK_TMR0CKEN_Msk;
 
-    /* Select UART and Timer 0 clock source from external crystal*/
+    /* Select UART clock source from external crystal*/
     CLK->CLKSEL1 = (CLK->CLKSEL1 & ~CLK_CLKSEL1_UARTSEL_Msk ) | CLK_CLKSEL1_UARTSEL_XTAL;
 
     /* Update System Core Clock */
