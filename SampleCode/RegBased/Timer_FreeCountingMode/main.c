@@ -19,18 +19,26 @@ void TMR0_IRQHandler(void)
     static int cnt = 0;
     static uint32_t t0, t1;
 
-    if(cnt == 0) {
+    if(cnt == 0)
+    {
         t0 = TIMER0->CAP;
         cnt++;
-    } else if(cnt == 1) {
+    }
+    else if(cnt == 1)
+    {
         t1 = TIMER0->CAP;
         cnt++;
-        if(t0 > t1) {
+        if(t0 > t1)
+        {
             // over run, do nothing
-        } else {
+        }
+        else
+        {
             printf("Input frequency is %dHz\n", 22118400 / (t1 - t0));
         }
-    } else {
+    }
+    else
+    {
         cnt = 0;
     }
 
@@ -47,7 +55,8 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
-    while(SYS->REGLCTL != 1) {
+    while(SYS->REGLCTL != 1)
+    {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;

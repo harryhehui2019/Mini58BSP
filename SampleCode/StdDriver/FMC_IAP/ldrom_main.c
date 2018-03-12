@@ -94,7 +94,8 @@ void SendChar_ToUART(int ch)
 {
     while (UART0->FIFOSTS & UART_FIFOSTS_TXFULL_Msk);
     UART0->DAT = ch;
-    if (ch == '\n') {
+    if (ch == '\n')
+    {
         while (UART0->FIFOSTS & UART_FIFOSTS_TXFULL_Msk);
         UART0->DAT = '\r';
     }

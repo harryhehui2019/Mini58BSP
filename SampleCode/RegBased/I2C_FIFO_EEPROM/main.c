@@ -21,7 +21,8 @@ void SYS_Init(void)
     int32_t i32TimeOutCnt;
 
     /* Unlock protected registers */
-    while(SYS->REGLCTL != 1) {
+    while(SYS->REGLCTL != 1)
+    {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
@@ -40,7 +41,8 @@ void SYS_Init(void)
     /* Waiting for clock ready */
     i32TimeOutCnt = __HSI / 200; /* About 5ms */
     while((CLK->STATUS & (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk)) !=
-            (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk)) {
+            (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk))
+    {
         if(i32TimeOutCnt-- <= 0)
             break;
     }
@@ -78,7 +80,8 @@ void ACK_Polling(void)
     /* Disable FIFO mode , don't need FIFO here */
     I2C->CTL1 &= ~I2C_CTL1_TWOLVFIFO_Msk;
 
-    do {
+    do
+    {
         /* Send start */
         I2C->CTL = (I2C->CTL & ~I2C_CTL_SI_Msk) | I2C_CTL_STA_Msk;         // S
         while(!(I2C->CTL & I2C_CTL_SI_Msk));                        // (INT), S
@@ -90,7 +93,8 @@ void ACK_Polling(void)
 
         u32Status = I2C_GET_STATUS(I2C);
         I2C->CTL = (I2C->CTL & ~0x3c) | I2C_STO | I2C_SI; // STOP
-    } while( u32Status!= 0x18);
+    }
+    while( u32Status!= 0x18);
 
     /* Enable FIFO mode again */
     I2C->CTL1 |= I2C_CTL1_TWOLVFIFO_Msk;
@@ -240,7 +244,8 @@ int main(void)
     EEPROM_Read();
 
     /* Check receive buffer */
-    for(i=0; i<3; i++) {
+    for(i=0; i<3; i++)
+    {
         if(WBuf[i] != RBuf[i])
             printf("Data-%d Error!\n", i);
         else

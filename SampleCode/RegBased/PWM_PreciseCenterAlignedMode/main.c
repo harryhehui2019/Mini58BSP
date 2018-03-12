@@ -22,7 +22,8 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
-    while(SYS->REGLCTL != 1) {
+    while(SYS->REGLCTL != 1)
+    {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
@@ -130,7 +131,8 @@ int32_t main (void)
     */
 
 
-    while(1) {
+    while(1)
+    {
         // Enable PWM Precise Center Aligned Type
         PWM->PCACTL = PWM_PCACTL_PCAEN_Msk;
 

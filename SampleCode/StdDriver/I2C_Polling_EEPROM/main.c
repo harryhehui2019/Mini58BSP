@@ -24,7 +24,8 @@ extern void EEPROM_Init(void);
 void delay_loop(void)
 {
     uint32_t i, j;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++)
+    {
         for (j = 0; j < 60000; j++);
     }
 }
@@ -59,17 +60,22 @@ int32_t I2C_24LC64_AutoTest(void)
 
     /* Verify */
     i32Err = 0;
-    for(i=0; i<256; i++) {
-        if(EEPROM_Read(i) != i) {
+    for(i=0; i<256; i++)
+    {
+        if(EEPROM_Read(i) != i)
+        {
             i32Err = 1;
             break;
         }
     }
 
-    if(i32Err) {
+    if(i32Err)
+    {
         printf("I2C EEPROM Write Fail !!\n");
         return -1;
-    } else {
+    }
+    else
+    {
         printf("I2C EEPROM Verify OK!\n");
     }
 
@@ -80,17 +86,22 @@ int32_t I2C_24LC64_AutoTest(void)
     EEPROM_SequentialRead(0, g_u8Buf, 256);
     /* Verify */
     i32Err = 0;
-    for(i=0; i<256; i++) {
-        if(g_u8Buf[i] != i) {
+    for(i=0; i<256; i++)
+    {
+        if(g_u8Buf[i] != i)
+        {
             i32Err = 1;
             break;
         }
     }
 
-    if(i32Err) {
+    if(i32Err)
+    {
         printf("I2C EEPROM Seq. Read Fail!\n");
         return -1;
-    } else {
+    }
+    else
+    {
         printf("I2C EEPROM Seq. Read OK!\n");
     }
 
@@ -108,17 +119,22 @@ int32_t I2C_24LC64_AutoTest(void)
     EEPROM_SequentialRead(0, g_u8Buf, 256);
     /* Verify */
     i32Err = 0;
-    for(i=0; i<256; i++) {
-        if(EEPROM_Read(i) != (i & 0xFF)) {
+    for(i=0; i<256; i++)
+    {
+        if(EEPROM_Read(i) != (i & 0xFF))
+        {
             i32Err = 1;
             break;
         }
     }
 
-    if(i32Err) {
+    if(i32Err)
+    {
         printf("I2C EEPROM Page Write Fail!\n");
         return -1;
-    } else {
+    }
+    else
+    {
         printf("I2C EEPROM Page Write OK!\n");
     }
 

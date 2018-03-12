@@ -21,13 +21,15 @@ void Delay(uint32_t x)
 {
     int32_t i;
 
-    for(i = 0; i < x; i++) {
+    for(i = 0; i < x; i++)
+    {
         __NOP();
         __NOP();
     }
 }
 
-uint32_t g_au32PllSetting[] = {
+uint32_t g_au32PllSetting[] =
+{
     25000000,  /* PLL = 25MHz */
     36000000,  /* PLL = 36MHz */
     48000000,  /* PLL = 48MHz */
@@ -45,7 +47,8 @@ void SYS_PLL_Demo(void)
 
     printf("\n-------------------------[ Test PLL ]-----------------------------\n");
 
-    for(i = 0; i < sizeof(g_au32PllSetting) / sizeof(g_au32PllSetting[0]) ; i++) {
+    for(i = 0; i < sizeof(g_au32PllSetting) / sizeof(g_au32PllSetting[0]) ; i++)
+    {
         /* Select HCLK clock source from PLL.
            PLL will be configured to twice specified frequency.
            And HCLK clock source divider will be set to 2.
@@ -151,7 +154,8 @@ int32_t main(void)
     SYS_UnlockReg();
 
     /* Check if the write-protected registers are unlocked before BOD setting and CPU Reset */
-    if(SYS_IsRegLocked() == 0) {
+    if(SYS_IsRegLocked() == 0)
+    {
         printf("Protected Address is Unlocked\n");
     }
 

@@ -26,13 +26,15 @@ void Delay(uint32_t x)
 {
     int32_t i;
 
-    for(i = 0; i < x; i++) {
+    for(i = 0; i < x; i++)
+    {
         __NOP();
         __NOP();
     }
 }
 
-uint32_t g_au32PllSetting[] = {
+uint32_t g_au32PllSetting[] =
+{
     CLK_PLLCTL_72MHz_HXT,   /* PLL = 72MHz */
     CLK_PLLCTL_96MHz_HXT,   /* PLL = 96MHz */
     CLK_PLLCTL_100MHz_HXT,  /* PLL = 100MHz */
@@ -63,7 +65,8 @@ void SYS_PLL_Demo(void)
 
     printf("\n-------------------------[ Test PLL ]-----------------------------\n");
 
-    for(i = 0; i < sizeof(g_au32PllSetting) / sizeof(g_au32PllSetting[0]) ; i++) {
+    for(i = 0; i < sizeof(g_au32PllSetting) / sizeof(g_au32PllSetting[0]) ; i++)
+    {
         /* Select HCLK clock source to HXT and HCLK source divider as 1 */
         CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLKSEL_Msk)) | CLK_CLKSEL0_HCLKSEL_HXT;
         CLK->CLKDIV  = (CLK->CLKDIV  & (~CLK_CLKDIV_HCLKDIV_Msk))  | CLK_CLKDIV_HCLK(1);
@@ -182,7 +185,8 @@ void UART0_Init()
 int32_t main(void)
 {
     /* Unlock protected registers */
-    while(SYS->REGLCTL != 1) {
+    while(SYS->REGLCTL != 1)
+    {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
@@ -207,14 +211,16 @@ int32_t main(void)
     /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers for Brown-Out Detector settings */
-    while(SYS->REGLCTL != 1) {
+    while(SYS->REGLCTL != 1)
+    {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
     }
 
     /* Check if the write-protected registers are unlocked before BOD setting and CPU Reset */
-    if(SYS->REGLCTL != 0) {
+    if(SYS->REGLCTL != 0)
+    {
         printf("Protected Address is Unlocked\n");
     }
 

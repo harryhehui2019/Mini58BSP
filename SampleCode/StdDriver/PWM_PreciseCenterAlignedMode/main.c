@@ -105,7 +105,8 @@ int32_t main (void)
 
     */
 
-    while(1) {
+    while(1)
+    {
         // Enable PWM Precise Center Aligned Type
         PWM->PCACTL = PWM_PCACTL_PCAEN_Msk;
 

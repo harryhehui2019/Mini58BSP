@@ -151,7 +151,8 @@ int32_t main (void)
     PWM_Start(PWM, 0x3F);
 
 
-    while(1) {
+    while(1)
+    {
         // Get ADC convert result
         printf("A/D PWM Sequential Mode First Result  is %x\n", ADC->SEQDAT1);
         printf("A/D PWM Sequential Mode Second Result is %x\n", ADC->SEQDAT2);

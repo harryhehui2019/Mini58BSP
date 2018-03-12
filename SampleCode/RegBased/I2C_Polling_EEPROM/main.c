@@ -24,7 +24,8 @@ extern void EEPROM_Init(void);
 void delay_loop(void)
 {
     uint32_t i, j;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i++)
+    {
         for (j = 0; j < 60000; j++);
     }
 }
@@ -39,17 +40,22 @@ int32_t I2C_24LC64_AutoTest(void)
 
     /* Verify */
     i32Err = 0;
-    for(i=0; i<256; i++) {
-        if(EEPROM_Read(i) != i) {
+    for(i=0; i<256; i++)
+    {
+        if(EEPROM_Read(i) != i)
+        {
             i32Err = 1;
             break;
         }
     }
 
-    if(i32Err) {
+    if(i32Err)
+    {
         printf("Write Fail!\n");
         return -1;
-    } else {
+    }
+    else
+    {
         printf("Verify OK!\n");
     }
 
@@ -60,17 +66,22 @@ int32_t I2C_24LC64_AutoTest(void)
     EEPROM_SequentialRead(0, g_u8Buf, 256);
     /* Verify */
     i32Err = 0;
-    for(i=0; i<256; i++) {
-        if(g_u8Buf[i] != i) {
+    for(i=0; i<256; i++)
+    {
+        if(g_u8Buf[i] != i)
+        {
             i32Err = 1;
             break;
         }
     }
 
-    if(i32Err) {
+    if(i32Err)
+    {
         printf("Seq. Read Fail\n");
         return -1;
-    } else {
+    }
+    else
+    {
         printf("Seq. Read OK!\n");
     }
 
@@ -88,17 +99,22 @@ int32_t I2C_24LC64_AutoTest(void)
     EEPROM_SequentialRead(0, g_u8Buf, 256);
     /* Verify */
     i32Err = 0;
-    for(i=0; i<256; i++) {
-        if(EEPROM_Read(i) != (i & 0xFF)) {
+    for(i=0; i<256; i++)
+    {
+        if(EEPROM_Read(i) != (i & 0xFF))
+        {
             i32Err = 1;
             break;
         }
     }
 
-    if(i32Err) {
+    if(i32Err)
+    {
         printf("Page Write Fail\n");
         return -1;
-    } else {
+    }
+    else
+    {
         printf("Page Write OK!\n");
     }
 
@@ -110,7 +126,8 @@ int32_t I2C_24LC64_ManualTest(void)
 {
     uint32_t i2cdata = 0, i;
 
-    for(i=0; i<10; i++) {
+    for(i=0; i<10; i++)
+    {
         EEPROM_Write(i, i);
         i2cdata = EEPROM_Read(i);
         printf("Address :%x, Write: %x, Read: %x\n", i, i, i2cdata);
@@ -125,7 +142,8 @@ void SYS_Init(void)
     int32_t i32TimeOutCnt;
 
     /* Unlock protected registers */
-    while(SYS->REGLCTL != 1) {
+    while(SYS->REGLCTL != 1)
+    {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
@@ -144,7 +162,8 @@ void SYS_Init(void)
     /* Waiting for clock ready */
     i32TimeOutCnt = __HSI / 200; /* About 5ms */
     while((CLK->STATUS & (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk)) !=
-            (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk)) {
+            (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk))
+    {
         if(i32TimeOutCnt-- <= 0)
             break;
     }

@@ -23,13 +23,14 @@ volatile uint8_t g_u8Done;
 
 void SYS_Init(void)
 {
-     int32_t i32TimeOutCnt;
+    int32_t i32TimeOutCnt;
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
-    while(SYS->REGLCTL != 1) {
+    while(SYS->REGLCTL != 1)
+    {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
@@ -44,7 +45,8 @@ void SYS_Init(void)
     /* Waiting for clock ready */
     i32TimeOutCnt = __HSI / 200; /* About 5ms */
     while((CLK->STATUS & (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk)) !=
-            (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk)) {
+            (CLK_STATUS_XTLSTB_Msk | CLK_STATUS_HIRCSTB_Msk))
+    {
         if(i32TimeOutCnt-- <= 0)
             break;
     }
@@ -77,7 +79,7 @@ void SYS_Init(void)
 
 void UART_Init(void)
 {
-   /*---------------------------------------------------------------------------------------------------------*/
+    /*---------------------------------------------------------------------------------------------------------*/
     /* Init UART                                                                                               */
     /*---------------------------------------------------------------------------------------------------------*/
     /* Reset IP */
@@ -108,17 +110,20 @@ void SPI_IRQHandler(void)
 {
     uint32_t temp;
 
-     while( !(SPI->STATUS & SPI_STATUS_TXFULL_Msk) && (g_u32TxDataCount<TEST_COUNT) ) {
+    while( !(SPI->STATUS & SPI_STATUS_TXFULL_Msk) && (g_u32TxDataCount<TEST_COUNT) )
+    {
         SPI->TX = g_au32SourceData[g_u32TxDataCount++];
     }
-	
-    while(!(SPI->STATUS & SPI_STATUS_RXEMPTY_Msk)) {
+
+    while(!(SPI->STATUS & SPI_STATUS_RXEMPTY_Msk))
+    {
         temp = SPI->RX;
         g_au32DestinationData[g_u32RxDataCount++] = temp;
     }
-	
-    if(g_u32TxDataCount>=TEST_COUNT) {
-        SPI->FIFOCTL &= ~SPI_FIFOCTL_TXTHIEN_Msk; /* Disable TX FIFO threshold interrupt */         
+
+    if(g_u32TxDataCount>=TEST_COUNT)
+    {
+        SPI->FIFOCTL &= ~SPI_FIFOCTL_TXTHIEN_Msk; /* Disable TX FIFO threshold interrupt */
         g_u8Done = 1;
     }
 }
@@ -135,7 +140,7 @@ int main(void)
 
     /* Init SPI */
     SPI_Init();
-    
+
     printf("\n\n");
     printf("+----------------------------------------------------------------------+\n");
     printf("|                       SPI Driver Sample Code                         |\n");
@@ -143,26 +148,28 @@ int main(void)
     printf("\n");
 
     printf("Configure SPI as a slave.\n");
-    
-    for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++) {
+
+    for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++)
+    {
         g_au32SourceData[u32DataCount] = 0x00550000 + u32DataCount;
         g_au32DestinationData[u32DataCount] = 0;
-    }    
-   
+    }
+
     SPI->CTL |= SPI_CTL_FIFOEN_Msk;
     SPI->FIFOCTL |= (SPI_FIFOCTL_RXTHIEN_Msk | SPI_FIFOCTL_TXTHIEN_Msk);
     SPI->FIFOCTL = (SPI->FIFOCTL & ~(SPI_FIFOCTL_TXTH_Msk | SPI_FIFOCTL_RXTH_Msk) |
-                     (2 << SPI_FIFOCTL_TXTH_Pos) |
-                     (1 << SPI_FIFOCTL_RXTH_Pos));
+                    (2 << SPI_FIFOCTL_TXTH_Pos) |
+                    (1 << SPI_FIFOCTL_RXTH_Pos));
     NVIC_EnableIRQ(SPI_IRQn);
-	
+
     while(!g_u8Done);
-    
+
     printf("Received data:\n");
-    for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++) {
+    for(u32DataCount=0; u32DataCount<TEST_COUNT; u32DataCount++)
+    {
         printf("%d:\t0x%08X\n", u32DataCount, g_au32DestinationData[u32DataCount]);
     }
-        
+
     printf("The data transfer was done.\n");
 
     while(1);

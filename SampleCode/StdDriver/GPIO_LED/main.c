@@ -80,7 +80,8 @@ int main(void)
     /*set P1.5 to output mode */
     GPIO_SetMode(P1, BIT5, GPIO_MODE_OUTPUT);
 
-    while(1) {
+    while(1)
+    {
         P15 = 0;
         delay_loop();
         P15 = 1;

@@ -29,7 +29,8 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
 
     /* Unlock protected registers */
-    while(SYS->REGLCTL != 1) {
+    while(SYS->REGLCTL != 1)
+    {
         SYS->REGLCTL = 0x59;
         SYS->REGLCTL = 0x16;
         SYS->REGLCTL = 0x88;
@@ -180,7 +181,8 @@ int32_t main (void)
     // Start
     PWM->CTL |= PWM_CTL_CNTEN0_Msk | PWM_CTL_CNTEN2_Msk;
 
-    while(1) {
+    while(1)
+    {
         // Get ADC convert result
         printf("A/D PWM Sequential Mode First Result  is %x\n", ADC->SEQDAT1);
         printf("A/D PWM Sequential Mode Second Result is %x\n", ADC->SEQDAT2);
