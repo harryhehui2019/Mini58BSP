@@ -108,9 +108,9 @@ int32_t main (void)
     P05 = 0;
 
     // Enable channel 0
-    ADC_Open(ADC, NULL, NULL, BIT0);
+    ADC_Open((ADC_T *)ADC, 0, 0, BIT0);
     // Enable channel 1
-    ADC_Open(ADC, NULL, NULL, BIT1);
+    ADC_Open((ADC_T *)ADC, 0, 0, BIT1);
 
     // Enable A/D Converter, A/D Interrupt , External Trigger and A/D conversion is started by PWM trigger
     ADC->CTL = ADC_CTL_ADCEN_Msk | ADC_CTL_ADCIEN_Msk | ADC_CTL_HWTRGSEL_Msk | ADC_CTL_HWTRGEN_Msk;

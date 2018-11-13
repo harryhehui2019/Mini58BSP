@@ -23,6 +23,8 @@ typedef void (FUNC_PTR)(void);
 
 extern uint32_t  loaderImage1Base, loaderImage1Limit;
 
+FUNC_PTR    *func;
+uint32_t    sp;
 
 void SYS_Init(void)
 {
@@ -162,7 +164,6 @@ int main()
 {
     uint8_t     u8Item;
     uint32_t    u32Data;
-    FUNC_PTR    *func;
 
     SYS_Init();
     UART_Init();
@@ -232,6 +233,9 @@ int main()
             break;
 
         case '1':
+            func = (FUNC_PTR *)FMC_Read(FMC_LDROM_BASE + 4);
+            sp = FMC_Read(FMC_LDROM_BASE);
+
             printf("\n\nChange VECMAP and branch to LDROM...\n");
             while (!(UART0->FIFOSTS & UART_FIFOSTS_TXEMPTY_Msk));
 
@@ -240,14 +244,18 @@ int main()
              *     The following code CANNOT locate in address 0x0 ~ 0x200.
              */
 
+#if defined (__GNUC__) && !defined(__ARMCC_VERSION) /* for GNU C compiler */
+            asm("msr msp, %0" : : "r" (sp));
+#else
+            __set_SP(sp);
+#endif
+
             /* FMC_SetVectorPageAddr(FMC_LDROM_BASE) */
             FMC->ISPCMD = FMC_ISPCMD_VECMAP;
             FMC->ISPADDR = FMC_LDROM_BASE;
             FMC->ISPTRG = FMC_ISPTRG_ISPGO_Msk;
             while (FMC->ISPTRG & FMC_ISPTRG_ISPGO_Msk) ;
 
-            func = (FUNC_PTR *)FMC_Read(FMC_LDROM_BASE + 4);
-            __set_SP(FMC_Read(FMC_LDROM_BASE));
             func();
             break;
 

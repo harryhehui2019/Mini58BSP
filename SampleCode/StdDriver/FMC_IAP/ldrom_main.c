@@ -20,52 +20,39 @@
 
 typedef void (FUNC_PTR)(void);
 
+FUNC_PTR    *func;
+uint32_t    sp;
+
 
 void SYS_Init(void)
 {
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Init System Clock                                                                                       */
-    /*---------------------------------------------------------------------------------------------------------*/
-    /* Unlock protected registers */
-    SYS_UnlockReg();
-
-    /* Enable HIRC clock (Internal RC 22.1184MHz) */
-    CLK_EnableXtalRC(CLK_PWRCTL_HIRCEN_Msk);
-
-    /* Wait for HIRC clock ready */
-    CLK_WaitClockReady(CLK_STATUS_HIRCSTB_Msk);
-
-    /* Select HCLK clock source as HIRC and and HCLK source divider as 1 */
-    CLK_SetHCLK(CLK_CLKSEL0_HCLKSEL_HIRC, CLK_CLKDIV_HCLK(1));
+    /* Read User Config to select internal high speed RC */
+    SystemInit();
 
     /* Set P5 multi-function pins for crystal output/input */
     SYS->P5_MFP &= ~(SYS_MFP_P50_Msk | SYS_MFP_P51_Msk);
     SYS->P5_MFP |= (SYS_MFP_P50_XT1_IN | SYS_MFP_P51_XT1_OUT);
 
-    /* Enable HXT clock (external XTAL 12MHz) */
-    CLK_EnableXtalRC(CLK_PWRCTL_XTLEN_HXT);
-
-    /* Wait for HXT clock ready */
-    CLK_WaitClockReady(CLK_STATUS_XTLSTB_Msk);
-
-    /* Set core clock as PLL_CLOCK from PLL */
-    CLK_SetCoreClock(PLL_CLOCK);
-
-    /* Enable UART module clock */
-    CLK_EnableModuleClock(UART0_MODULE);
-
-    /* Select UART module clock source as HXT and UART module clock divider as 1 */
-    CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UARTSEL_XTAL, CLK_CLKDIV_UART(1));
-
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Init I/O Multi-function                                                                                 */
+    /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Set P0 multi-function pins for UART RXD and TXD */
-    SYS->P0_MFP &= ~(SYS_MFP_P01_Msk | SYS_MFP_P00_Msk);
-    SYS->P0_MFP |= (SYS_MFP_P01_UART0_RXD | SYS_MFP_P00_UART0_TXD);
+    /* Enable External XTAL (4~24 MHz) */
+    CLK->PWRCTL &= ~CLK_PWRCTL_XTLEN_Msk;
+    CLK->PWRCTL |= (0x1 << CLK_PWRCTL_XTLEN_Pos); // XTAL12M (HXT) Enabled
 
-    /* Lock protected registers */
-    SYS_LockReg();
+    /* Waiting for 12MHz clock ready */
+    while (!(CLK->STATUS & CLK_STATUS_XTLSTB_Msk));
+
+    /* Switch HCLK clock source to XTAL */
+    CLK->CLKSEL0 &= ~CLK_CLKSEL0_HCLKSEL_Msk;
+    CLK->CLKSEL0 |= CLK_CLKSEL0_HCLKSEL_XTAL;
+
+    /* Enable IP clock */
+    CLK->APBCLK |= CLK_APBCLK_UART0CKEN_Msk; // UART Clock Enable
+
+    /* Select IP clock source */
+    CLK->CLKSEL1 &= ~CLK_CLKSEL1_UARTSEL_Msk;
+    CLK->CLKSEL1 |= (0x0 << CLK_CLKSEL1_UARTSEL_Pos);// Clock source from external 12 MHz or 32 KHz crystal clock
 }
 
 void UART_Init()
@@ -73,11 +60,10 @@ void UART_Init()
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init UART                                                                                               */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Reset IP */
-    SYS_ResetModule(UART0_RST);
-
-    UART0->BAUD = 0x30000066;
+    /* Set P0,P1 multi-function pins for UART RXD and TXD  */
+    SYS->P0_MFP = 0x303;
     UART0->LINE = 0x3;
+    UART0->BAUD = 0x30000066;
 }
 
 
@@ -126,11 +112,17 @@ int main()
     print_msg("\n\nPress any key to branch to APROM...\n");
     while (UART0->FIFOSTS & UART_FIFOSTS_RXEMPTY_Msk);
 
-    print_msg("\n\nChange VECMAP and branch to LDROM...\n");
+    print_msg("\n\nChange VECMAP and branch to APROM...\n");
     while (!(UART0->FIFOSTS & UART_FIFOSTS_TXEMPTY_Msk));
 
-    func = (FUNC_PTR *) FMC_Read(FMC_APROM_BASE+4);
-    __set_SP( FMC_Read(FMC_APROM_BASE) );
+    sp = FMC_Read(FMC_APROM_BASE);
+    func = (FUNC_PTR *)FMC_Read(FMC_APROM_BASE + 4);
+
+#if defined (__GNUC__) && !defined(__ARMCC_VERSION) /* for GNU C compiler */
+    asm("msr msp, %0" : : "r" (sp));
+#else
+    __set_SP(sp);
+#endif
 
     /*  NOTE!
      *     Before change VECMAP, user MUST disable all interrupts.
