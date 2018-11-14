@@ -9,7 +9,7 @@
  * Copyright (C) 2015 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include <stdio.h>
-#include "mini58series.h"
+#include "Mini58Series.h"
 
 
 void SYS_Init(void)

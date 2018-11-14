@@ -11,7 +11,6 @@
  ******************************************************************************/
 #include <stdio.h>
 #include "Mini58Series.h"
-#include "GPIO.h"
 
 /**
  * @brief       Port0/Port1 IRQ
