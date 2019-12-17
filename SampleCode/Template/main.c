@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include "Mini58Series.h"
 
-
+//This file edited by Harry 2019-12-17
 void SYS_Init(void)
 {
     /* Unlock protected registers */
